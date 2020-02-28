@@ -1,0 +1,8 @@
+Valid client setting values are the ff:
+
+Client A:
+    "ClientId": "1001",
+    "FileDirectoryPath": "UploadFiles/ClientA"
+Client B:
+    "ClientId": "2001",
+    "FileDirectoryPath": "UploadFiles/ClientB"

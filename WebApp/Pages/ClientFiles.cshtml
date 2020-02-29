@@ -1,0 +1,178 @@
+﻿@page
+@model WebApp.Pages.ClientFilesModel
+@{
+    ViewData["Title"] = "Client Files";
+}
+
+<h1>Client Files</h1>
+<div id="divStatusMessage" style="display: none;" role="alert"></div>
+
+<div id="divClients"></div>
+
+<!-- Modal - File Content -->
+<div class="modal fade" id="modalFileContent" tabindex="-1" role="dialog" aria-labelledby="modalFileContentTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFileContentTitle">Content</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="overflow-auto" id="divFileContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        'use strict';
+
+        const api_v1 = 'https://localhost:5001/api/v1';
+
+        const divStatusMessage = $('#divStatusMessage');
+        const divClients = $('#divClients');
+        const modalFileContentTitle = $('#modalFileContentTitle');
+        const divFileContent = $('#divFileContent');
+
+        let clients = [];
+
+        //#region events
+
+        //btnView click
+        divClients.on('click', 'div[name="divClientFiles"] table tbody tr td button[name="btnView"]', function () {
+            const clientId = Number($(this).parents('div[name="divClientFiles"]').attr('data-clientid'));
+            const fileName = $(this).parents('tr').attr('data-filename');
+
+            const requestData = {
+                    ClientId: clientId,
+                    FileName: fileName
+            };
+
+            divLoader.show();
+
+            fetch(api_v1 + '/clients', {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'include',
+                    body: JSON.stringify(requestData),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }).then(res => res.json())
+                    .then(response => {
+                        const result = JSON.parse(response);
+
+                        if (result.ErrorMessage) {
+                            PopulateStatusMessage(divStatusMessage, 'danger', result.ErrorMessage);
+                        }
+                        else {
+                            const fileContent = result.FileContent;
+                            divFileContent.text(fileContent);
+                            modalFileContentTitle.text(fileName);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+
+            divLoader.hide();
+        });
+
+        window.onload = function () {
+            divLoader.show();
+
+            InitializePage();
+
+            divLoader.hide();
+        }
+        //#endregion
+
+        //#region methods
+        function PopulateFiles(files) {
+
+            let html = '';
+
+            let trs = ''
+
+            files.sort((a, b) => { return a.Id - b.Id });
+
+            for (let i = 0; i < files.length; i++) {
+
+                const file = files[i];
+                const fileName = file.FileName;
+
+                trs += `<tr data-filename="${fileName}">
+                                <td>${file.Id}</td>
+                                <td>${fileName}</td>
+                                <td>${file.ProcessedOn}</td>
+                                <td><button class="btn btn-link" name="btnView" data-toggle="modal" data-target="#modalFileContent">View</button></td>
+                            <tr>`;
+
+            }
+
+            if (files.length > 0) {
+                html = `<div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th style="width: 390px;">FileName</th>
+                                            <th>Enumerated On</th>
+                                            <th>Content</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${trs}</tbody>
+                                </table>
+                            </div>`;
+
+            }
+
+            return html;
+
+        }
+
+        function PopulateClients() {
+
+            let html = '';
+            for (let i = 0; i < clients.length; i++) {
+                const client = clients[i];
+                const files = client.Files;
+                html += `<h3>${client.Name}</h3>
+                                <div name="divClientFiles" data-clientid="${client.Id}">${PopulateFiles(files)}</div>
+                                `;
+            }
+
+            divClients.html(html);
+
+        }
+
+        function InitializePage() {
+
+            fetch(api_v1 + '/clients', {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then(res => res.json())
+                .then(response => {
+                    const result = JSON.parse(response);
+                    clients = result.Clients;
+                    PopulateClients();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        //#endregion
+
+    </script>
+
+
+}

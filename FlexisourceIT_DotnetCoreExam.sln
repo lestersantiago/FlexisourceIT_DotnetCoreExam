@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "opg-201910-interview", "opg-201910Base-master\opg-201910-interview.csproj", "{081EDB9E-4052-4ED4-BE25-0B6B720D1669}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{D9AD6614-D36C-4549-9FF3-4C5973573B3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{081EDB9E-4052-4ED4-BE25-0B6B720D1669}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{081EDB9E-4052-4ED4-BE25-0B6B720D1669}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{081EDB9E-4052-4ED4-BE25-0B6B720D1669}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9AD6614-D36C-4549-9FF3-4C5973573B3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9AD6614-D36C-4549-9FF3-4C5973573B3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9AD6614-D36C-4549-9FF3-4C5973573B3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9AD6614-D36C-4549-9FF3-4C5973573B3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

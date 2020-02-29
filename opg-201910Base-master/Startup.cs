@@ -38,6 +38,15 @@ namespace opg_201910_interview
                 });
             });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.WithOrigins("https://localhost:5003")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddScoped<IClientRepository, ClientRepository>();
 
@@ -60,6 +69,8 @@ namespace opg_201910_interview
 
             app.UseAuthorization();
 
+            app.UseCors("CorsPolicy");
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -72,6 +83,8 @@ namespace opg_201910_interview
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "opg-201910-interview API V1");
                 });
+
+            
         }
     }
 }

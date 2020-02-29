@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using opg_201910_interview.Core;
+using opg_201910_interview.Persistence;
 
 namespace opg_201910_interview
 {
@@ -24,6 +26,21 @@ namespace opg_201910_interview
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddSwaggerGen(options =>
+            {
+                //options.DescribeAllEnumsAsStrings();
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "opg-201910-interview API",
+                    Version = "v1",
+                    Description = "opg-201910-interview API"
+                });
+            });
+
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddScoped<IClientRepository, ClientRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +66,12 @@ namespace opg_201910_interview
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            app.UseSwagger()
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "opg-201910-interview API V1");
+                });
         }
     }
 }
